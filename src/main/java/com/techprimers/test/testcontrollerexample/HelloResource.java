@@ -1,17 +1,22 @@
 package com.techprimers.test.testcontrollerexample;
 
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/hello")
 public class HelloResource {
 
+    private HelloService helloService;
+
+    public HelloResource(HelloService helloService) {
+        this.helloService = helloService;
+    }
+
+
     @GetMapping
     public String helloWorld() {
-        return "hello World!";
+        return helloService.hello();
     }
 
 
@@ -20,7 +25,13 @@ public class HelloResource {
         return new Hello("Greetings", "Hello World");
     }
 
-    private class Hello {
+    @PostMapping(value = "/post", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Hello post(@RequestBody Hello hello) {
+        return hello;
+    }
+
+    public static class Hello {
 
         private String title;
         private String value;
@@ -44,6 +55,9 @@ public class HelloResource {
         public Hello(String title, String value) {
             this.title = title;
             this.value = value;
+        }
+
+        public Hello() {
         }
     }
 }
